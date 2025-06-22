@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Electricity Agreements</title>
+  </head>
+  <body>
+    <h1>Electricity Agreements</h1>
+    <table border="1" cellpadding="8" cellspacing="0">
+      <thead>
+        <tr>
+          <th>Company</th>
+          <th>Price</th>
+          <th>Contract Length</th>
+          <th>Monthly Price</th>
+          <th>Dynamic Purchase Fee</th>
+          <th>Taxes</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for item in data %}
+        <tr>
+          <td>{{ item.company }}</td>
+          <td>{{ item.price }}</td>
+          <td>{{ item.avtalstid }}</td>
+          <td>{{ item.monthly_price }}</td>
+          <td>{{ item.dynamic_purchase_fee }}</td>
+          <td>{{ item.taxes }}</td>
+        </tr>
+        {% else %}
+        <tr>
+          <td colspan="6">No data found.</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </body>
+</html>
