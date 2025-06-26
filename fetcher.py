@@ -5,16 +5,16 @@ BASE_URL = "https://www.elmarknad.se/api/agreement/filter"
 PAGINATION_URL = "https://www.elmarknad.se/api/agreement/paginationfilter"
 
 CONTRACT_TYPE_TO_COLUMN = {
-    "Monthly": "price_monthly",
-    "Hourly": "price_hourly",
+    # "Monthly": "price_monthly",
+    # "Hourly": "price_hourly",
     "Fast": "price_fast"
 }
 
 REGIONS = [
     {"ElområdeId": 1, "Postnummer": 97231},
-    {"ElområdeId": 2, "Postnummer": 85102},
-    {"ElområdeId": 3, "Postnummer": 11120},
-    {"ElområdeId": 4, "Postnummer": 21119},
+    # {"ElområdeId": 2, "Postnummer": 85102},
+    # {"ElområdeId": 3, "Postnummer": 11120},
+    # {"ElområdeId": 4, "Postnummer": 21119},
 ]
 
 PARAMS_TEMPLATE = {
@@ -35,10 +35,30 @@ PARAMS_TEMPLATE = {
     "Company": "",
 }
 
+def map_avtalstid_to_column(avtalstid: str):
+    avtalstid = avtalstid.lower()
+    if "3 mån" in avtalstid:
+        return "price_fast_3m"
+    elif "6 mån" in avtalstid:
+        return "price_fast_6m"
+    elif "1 år" in avtalstid or "12 mån" in avtalstid:
+        return "price_fast_1y"
+    elif "2 år" in avtalstid:
+        return "price_fast_2y"
+    elif "3 år" in avtalstid:
+        return "price_fast_3y"
+    elif "4 år" in avtalstid:
+        return "price_fast_4y"
+    elif "5 år" in avtalstid:
+        return "price_fast_5y"
+    elif "10 år" in avtalstid:
+        return "price_fast_10y"
+    return None
+
 def fetch_all_agreements():
     session = Session()
 
-    for contract_type, price_column in CONTRACT_TYPE_TO_COLUMN.items():
+    for contract_type, base_column in CONTRACT_TYPE_TO_COLUMN.items():
         for region in REGIONS:
             print(f"\nFetching {contract_type} contracts for ElområdeId={region['ElområdeId']}, Postnummer={region['Postnummer']}")
 
@@ -95,10 +115,22 @@ def fetch_all_agreements():
                         postnummer=region["Postnummer"]
                     )
 
-                setattr(db_ag, price_column, price)
-                session.add(db_ag)
+                # Store base contract price
+                setattr(db_ag, base_column, price)
 
-                print(f"Saved: {company} | {contract_type} = {price}")
+                # For Fast contracts, map Avtalstid
+                if contract_type == "Fast":
+                    avtalstid = ag.get("Avtalstid", "")
+                    avtalstid_column = map_avtalstid_to_column(avtalstid)
+                    if avtalstid_column:
+                        setattr(db_ag, avtalstid_column, price)
+                        print(f"→ [{contract_type}] {company} | {avtalstid_column} = {price}")
+                    else:
+                        print(f"→ [{contract_type}] {company} | Unrecognized Avtalstid: {avtalstid}")
+                else:
+                    print(f"→ [{contract_type}] {company} = {price}")
+
+                session.add(db_ag)
 
             session.commit()
     session.close()

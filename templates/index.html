@@ -39,6 +39,14 @@
           <th>Monthly Price</th>
           <th>Hourly Price</th>
           <th>Fast Price</th>
+          <th>Fast 3m</th>
+          <th>Fast 6m</th>
+          <th>Fast 1y</th>
+          <th>Fast 2y</th>
+          <th>Fast 3y</th>
+          <th>Fast 4y</th>
+          <th>Fast 5y</th>
+          <th>Fast 10y</th>
         </tr>
       </thead>
       <tbody>
@@ -47,9 +55,17 @@
           <td>{{ agreement.company }}</td>
           <td>{{ agreement.elomrade_id }}</td>
           <td>{{ agreement.postnummer }}</td>
-          <td>{{ agreement.price_monthly if agreement.price_monthly is not none else '–' }}</td>
-          <td>{{ agreement.price_hourly if agreement.price_hourly is not none else '–' }}</td>
-          <td>{{ agreement.price_fast if agreement.price_fast is not none else '–' }}</td>
+          <td>{{ agreement.price_monthly if agreement.price_monthly is not none else '-' }}</td>
+          <td>{{ agreement.price_hourly if agreement.price_hourly is not none else '-' }}</td>
+          <td>{{ agreement.price_fast if agreement.price_fast is not none else '-' }}</td>
+          <td>{{ agreement.price_fast_3m or '-' }}</td>
+          <td>{{ agreement.price_fast_6m or '-' }}</td>
+          <td>{{ agreement.price_fast_1y or '-' }}</td>
+          <td>{{ agreement.price_fast_2y or '-' }}</td>
+          <td>{{ agreement.price_fast_3y or '-' }}</td>
+          <td>{{ agreement.price_fast_4y or '-' }}</td>
+          <td>{{ agreement.price_fast_5y or '-' }}</td>
+          <td>{{ agreement.price_fast_10y or '-' }}</td>
         </tr>
         {% else %}
         <tr>
