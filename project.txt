@@ -1,0 +1,24 @@
+Project Requirements and Deliverables
+1. A website needs to be created with 3 pages containing ads. The pages will be: Home, About, and Contact.
+2. The website must display electricity prices from different companies across 4 regions in Sweden. Prices should be presented in a table format with user-friendly filters (e.g., sorting).
+3. The electricity prices must be fetched from the following websites:
+https://www.elmarknad.se/
+https://www.umeaenergi.se/
+https://www.lindeenergi.se/
+https://www.karnfull.se/
+https://hallstavikselverk.se/
+https://tibber.com/se
+https://www.c4energi.se/
+https://etcel.se/
+https://www.bondensel.se/
+https://www.renenkelbilligel.se/
+https://borasem.se/
+4. Data must be fetched automatically every week using a cron job (automated process execution) and saved on the server.
+5. The specific price details to be included are outlined in the PriceTable.xlsx document provided by the client.
+6. Additional information about the pricing is provided in the Main_Instruction_Doc document.
+7. Google AdSense ads must be placed on the website once development is complete.
+8. The basic design layout of the web pages is provided by the client.
+9. Payment will be released in 3 phases and accordingly, three separate invoices must be issued.
+i) First payment upon project completion,
+ii) Second payment after one week of project completion,
+iii) Third payment one week after the second payment.

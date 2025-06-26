@@ -1,34 +1,57 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
   <head>
-    <title>Electricity Agreements</title>
+    <meta charset="UTF-8" />
+    <title>Elpristabellen - Electricity Prices</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        margin: 20px;
+      }
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 15px;
+      }
+      th,
+      td {
+        border: 1px solid #ccc;
+        padding: 8px 12px;
+        text-align: left;
+      }
+      th {
+        background-color: #007bff;
+        color: white;
+      }
+      tr:nth-child(even) {
+        background-color: #f5f5f5;
+      }
+    </style>
   </head>
   <body>
-    <h1>Electricity Agreements</h1>
-    <table border="1" cellpadding="8" cellspacing="0">
+    <h1>Elpristabellen - Electricity Prices</h1>
+    <table>
       <thead>
         <tr>
           <th>Company</th>
-          <th>Price</th>
-          <th>Contract Length</th>
-          <th>Monthly Price</th>
-          <th>Dynamic Purchase Fee</th>
-          <th>Taxes</th>
+          <th>Contract Type</th>
+          <th>Price (SEK)</th>
+          <th>Region (ElområdeId)</th>
+          <th>Postcode (Postnummer)</th>
         </tr>
       </thead>
       <tbody>
-        {% for item in data %}
+        {% for agreement in agreements %}
         <tr>
-          <td>{{ item.company }}</td>
-          <td>{{ item.price }}</td>
-          <td>{{ item.avtalstid }}</td>
-          <td>{{ item.monthly_price }}</td>
-          <td>{{ item.dynamic_purchase_fee }}</td>
-          <td>{{ item.taxes }}</td>
+          <td>{{ agreement.company }}</td>
+          <td>{{ agreement.contract_type }}</td>
+          <td>{{ agreement.price if agreement.price is not none else '–' }}</td>
+          <td>{{ agreement.elomrade_id }}</td>
+          <td>{{ agreement.postnummer }}</td>
         </tr>
         {% else %}
         <tr>
-          <td colspan="6">No data found.</td>
+          <td colspan="5">No agreements found.</td>
         </tr>
         {% endfor %}
       </tbody>

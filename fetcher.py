@@ -1,17 +1,22 @@
-# app.py
 import requests
-from db import init_db, SessionLocal
-from models import Agreement
+from models import Session, Agreement
 
 BASE_URL = "https://www.elmarknad.se/api/agreement/filter"
 PAGINATION_URL = "https://www.elmarknad.se/api/agreement/paginationfilter"
 
 CONTRACT_TYPES = ["Monthly", "Hourly", "Fast"]
 
+REGIONS = [
+    {"ElområdeId": 1, "Postnummer": 97231},
+    {"ElområdeId": 2, "Postnummer": 85102},
+    {"ElområdeId": 3, "Postnummer": 11120},
+    {"ElområdeId": 4, "Postnummer": 21119},
+]
+
 PARAMS_TEMPLATE = {
-    "Postnummer": 97231,
-    "Typ": "",
-    "ElområdeId": 1,
+    "Postnummer": None,
+    "Typ": None,
+    "ElområdeId": None,
     "Förbrukning": 3750,
     "PaymentMethod": "E",
     "Property": "cabin",
@@ -23,53 +28,82 @@ PARAMS_TEMPLATE = {
     "HasBlacklist": "false",
     "DealTime": "all",
     "ShowBest": "true",
-    "Company": ""
+    "Company": "",
 }
 
 def fetch_all_agreements():
-    init_db()
-    db = SessionLocal()
-
+    session = Session()
     for contract_type in CONTRACT_TYPES:
-        print(f"\nFetching contract type: {contract_type}")
-        params = PARAMS_TEMPLATE.copy()
-        params["Typ"] = contract_type
+        for region in REGIONS:
+            print(f"\nFetching contract type: {contract_type} for region ElområdeId={region['ElområdeId']} Postnummer={region['Postnummer']}")
+            
+            params = PARAMS_TEMPLATE.copy()
+            params["Typ"] = contract_type
+            params["ElområdeId"] = region["ElområdeId"]
+            params["Postnummer"] = region["Postnummer"]
+            
+            try:
+                response = requests.get(BASE_URL, params=params)
+                response.raise_for_status()
+            except requests.RequestException as e:
+                print(f"Failed to fetch main page: {e}")
+                continue
+            
+            data = response.json()
+            total = data.get("AgreementsCount", 0)
+            agreements = data.get("SearchResultViewModels", [])
+            print(f"Total agreements: {total}, initially fetched: {len(agreements)}")
 
-        response = requests.get(BASE_URL, params=params)
-        response.raise_for_status()
-        data = response.json()
+            batch_size = 5
+            for skip in range(batch_size, total, batch_size):
+                pag_params = params.copy()
+                pag_params["Skip"] = skip
+                
+                try:
+                    pag_response = requests.get(PAGINATION_URL, params=pag_params)
+                    pag_response.raise_for_status()
+                except requests.RequestException as e:
+                    print(f"Failed to fetch page with skip={skip}: {e}")
+                    continue
+                
+                pag_data = pag_response.json()
+                batch = pag_data.get("SearchResultViewModels", [])
+                print(f"Fetched {len(batch)} agreements at skip={skip}")
+                agreements.extend(batch)
 
-        total = data.get("AgreementsCount", 0)
-        agreements = data.get("SearchResultViewModels", [])
-        print(f"Total agreements for {contract_type}: {total}")
-        print(f"Fetched {len(agreements)} agreements for {contract_type}")
+            for ag in agreements:
+                company = ag.get("Company", "Unknown")
+                price = ag.get("Price")
+                if price is not None:
+                    try:
+                        price = float(price)
+                    except:
+                        price = None
 
-        batch_size = 5
-        for skip in range(batch_size, total, batch_size):
-            pag_params = params.copy()
-            pag_params["Skip"] = skip
-            pag_response = requests.get(PAGINATION_URL, params=pag_params)
-            pag_response.raise_for_status()
-            pag_data = pag_response.json()
-            batch = pag_data.get("SearchResultViewModels", [])
-            print(f"Fetched {len(batch)} agreements for {contract_type}, skip={skip}")
-            agreements.extend(batch)
+                # Create or update existing agreement for same company, type, region, postcode
+                existing = session.query(Agreement).filter_by(
+                    company=company,
+                    contract_type=contract_type,
+                    elomrade_id=region["ElområdeId"],
+                    postnummer=region["Postnummer"],
+                ).first()
 
-        for ag in agreements:
-            company = ag.get("Company", "Unknown")
-            price = ag.get("Price", 0.0)
-            print(f"[{contract_type}] Company: {company} | Price: {price}")
+                if existing:
+                    existing.price = price
+                else:
+                    new_agreement = Agreement(
+                        company=company,
+                        contract_type=contract_type,
+                        price=price,
+                        elomrade_id=region["ElområdeId"],
+                        postnummer=region["Postnummer"],
+                    )
+                    session.add(new_agreement)
 
-            agreement = Agreement(
-                company=company,
-                contract_type=contract_type,
-                price=float(price)
-            )
-            db.add(agreement)
+                print(f"Saved: [{contract_type}] {company} | Price: {price}")
 
-    db.commit()
-    db.close()
-    print("✅ All data saved to database.")
+            session.commit()
+    session.close()
 
 if __name__ == "__main__":
     fetch_all_agreements()

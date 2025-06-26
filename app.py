@@ -1,17 +1,14 @@
-from flask import Flask, render_template, jsonify
-from models import init_db, get_all_agreements
+from flask import Flask, render_template
+from models import Session, Agreement
 
 app = Flask(__name__)
 
-@app.route("/")
-def home():
-    data = get_all_agreements()
-    return render_template("index.html", data=data)
+@app.route('/')
+def index():
+    session = Session()
+    agreements = session.query(Agreement).all()
+    session.close()
+    return render_template("index.html", agreements=agreements)
 
-@app.route("/api/data")
-def api_data():
-    return jsonify(get_all_agreements())
-
-if __name__ == "__main__":
-    init_db()
+if __name__ == '__main__':
     app.run(debug=True)

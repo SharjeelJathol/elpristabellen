@@ -4,7 +4,7 @@
 
 # source venv/bin/activate //linux
 
-# pip install flask sqlalchemy requests apscheduler
+# pip install flask sqlalchemy requests apscheduler install fastapi uvicorn
 
 # python fetcher.py
 
