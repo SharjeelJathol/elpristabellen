@@ -34,24 +34,26 @@
       <thead>
         <tr>
           <th>Company</th>
-          <th>Contract Type</th>
-          <th>Price (SEK)</th>
           <th>Region (ElområdeId)</th>
-          <th>Postcode (Postnummer)</th>
+          <th>Postnummer</th>
+          <th>Monthly Price</th>
+          <th>Hourly Price</th>
+          <th>Fast Price</th>
         </tr>
       </thead>
       <tbody>
         {% for agreement in agreements %}
         <tr>
           <td>{{ agreement.company }}</td>
-          <td>{{ agreement.contract_type }}</td>
-          <td>{{ agreement.price if agreement.price is not none else '–' }}</td>
           <td>{{ agreement.elomrade_id }}</td>
           <td>{{ agreement.postnummer }}</td>
+          <td>{{ agreement.price_monthly if agreement.price_monthly is not none else '–' }}</td>
+          <td>{{ agreement.price_hourly if agreement.price_hourly is not none else '–' }}</td>
+          <td>{{ agreement.price_fast if agreement.price_fast is not none else '–' }}</td>
         </tr>
         {% else %}
         <tr>
-          <td colspan="5">No agreements found.</td>
+          <td colspan="6">No agreements found.</td>
         </tr>
         {% endfor %}
       </tbody>

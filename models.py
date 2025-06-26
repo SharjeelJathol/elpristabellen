@@ -9,7 +9,10 @@ class Agreement(Base):
 
     id = Column(Integer, primary_key=True, autoincrement=True)
     company = Column(String, nullable=False)
-    contract_type = Column(String, nullable=False)
+    # contract_type = Column(String, nullable=False)
+    price_monthly = Column(Float, nullable=True)
+    price_hourly = Column(Float, nullable=True)
+    price_fast = Column(Float, nullable=True)
     price = Column(Float, nullable=True)
     elomrade_id = Column(Integer, nullable=False)
     postnummer = Column(Integer, nullable=False)

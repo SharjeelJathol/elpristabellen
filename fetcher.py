@@ -4,7 +4,11 @@ from models import Session, Agreement
 BASE_URL = "https://www.elmarknad.se/api/agreement/filter"
 PAGINATION_URL = "https://www.elmarknad.se/api/agreement/paginationfilter"
 
-CONTRACT_TYPES = ["Monthly", "Hourly", "Fast"]
+CONTRACT_TYPE_TO_COLUMN = {
+    "Monthly": "price_monthly",
+    "Hourly": "price_hourly",
+    "Fast": "price_fast"
+}
 
 REGIONS = [
     {"ElområdeId": 1, "Postnummer": 97231},
@@ -33,74 +37,68 @@ PARAMS_TEMPLATE = {
 
 def fetch_all_agreements():
     session = Session()
-    for contract_type in CONTRACT_TYPES:
+
+    for contract_type, price_column in CONTRACT_TYPE_TO_COLUMN.items():
         for region in REGIONS:
-            print(f"\nFetching contract type: {contract_type} for region ElområdeId={region['ElområdeId']} Postnummer={region['Postnummer']}")
-            
+            print(f"\nFetching {contract_type} contracts for ElområdeId={region['ElområdeId']}, Postnummer={region['Postnummer']}")
+
             params = PARAMS_TEMPLATE.copy()
             params["Typ"] = contract_type
             params["ElområdeId"] = region["ElområdeId"]
             params["Postnummer"] = region["Postnummer"]
-            
+
             try:
                 response = requests.get(BASE_URL, params=params)
                 response.raise_for_status()
             except requests.RequestException as e:
-                print(f"Failed to fetch main page: {e}")
+                print(f"Main request failed: {e}")
                 continue
-            
+
             data = response.json()
             total = data.get("AgreementsCount", 0)
             agreements = data.get("SearchResultViewModels", [])
-            print(f"Total agreements: {total}, initially fetched: {len(agreements)}")
 
-            batch_size = 5
-            for skip in range(batch_size, total, batch_size):
+            # Pagination
+            for skip in range(5, total, 5):
                 pag_params = params.copy()
                 pag_params["Skip"] = skip
-                
                 try:
                     pag_response = requests.get(PAGINATION_URL, params=pag_params)
                     pag_response.raise_for_status()
                 except requests.RequestException as e:
-                    print(f"Failed to fetch page with skip={skip}: {e}")
+                    print(f"Pagination request failed at skip={skip}: {e}")
                     continue
-                
+
                 pag_data = pag_response.json()
-                batch = pag_data.get("SearchResultViewModels", [])
-                print(f"Fetched {len(batch)} agreements at skip={skip}")
-                agreements.extend(batch)
+                agreements.extend(pag_data.get("SearchResultViewModels", []))
 
             for ag in agreements:
                 company = ag.get("Company", "Unknown")
                 price = ag.get("Price")
+
                 if price is not None:
                     try:
                         price = float(price)
                     except:
                         price = None
 
-                # Create or update existing agreement for same company, type, region, postcode
-                existing = session.query(Agreement).filter_by(
+                db_ag = session.query(Agreement).filter_by(
                     company=company,
-                    contract_type=contract_type,
                     elomrade_id=region["ElområdeId"],
-                    postnummer=region["Postnummer"],
+                    postnummer=region["Postnummer"]
                 ).first()
 
-                if existing:
-                    existing.price = price
-                else:
-                    new_agreement = Agreement(
+                if not db_ag:
+                    db_ag = Agreement(
                         company=company,
-                        contract_type=contract_type,
-                        price=price,
                         elomrade_id=region["ElområdeId"],
-                        postnummer=region["Postnummer"],
+                        postnummer=region["Postnummer"]
                     )
-                    session.add(new_agreement)
 
-                print(f"Saved: [{contract_type}] {company} | Price: {price}")
+                setattr(db_ag, price_column, price)
+                session.add(db_ag)
+
+                print(f"Saved: {company} | {contract_type} = {price}")
 
             session.commit()
     session.close()
