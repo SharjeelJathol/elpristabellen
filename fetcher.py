@@ -6,7 +6,7 @@ PAGINATION_URL = "https://www.elmarknad.se/api/agreement/paginationfilter"
 
 CONTRACT_TYPE_TO_COLUMN = {
     "Monthly": "price_monthly",
-    # "Hourly": "price_hourly",
+    "Hourly": "price_hourly",
     "Fast": "price_fast"
 }
 
@@ -160,6 +160,25 @@ def fetch_all_agreements():
                     db_ag.rorligt_spotpaslag = extra_fee
                     db_ag.monthly_vat = taxes
                     db_ag.rorligt_price = price
+
+                    print(f"→ [Monthly] {company} | Price={price}, Spotpåslag={extra_fee}, VAT={taxes}")
+                elif contract_type == "Hourly":
+                    extra_fee = ag.get("ExtraFee")
+                    taxes = ag.get("Taxes")
+
+                    try:
+                        extra_fee = float(extra_fee)
+                    except:
+                        extra_fee = None
+
+                    try:
+                        taxes = float(taxes)
+                    except:
+                        taxes = None
+
+                    db_ag.timpris_spotpaslag = extra_fee
+                    db_ag.hourly_vat = taxes
+                    db_ag.timpris_price = price
 
                     print(f"→ [Monthly] {company} | Price={price}, Spotpåslag={extra_fee}, VAT={taxes}")
 

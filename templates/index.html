@@ -52,6 +52,9 @@
           <th>Monthly Price</th>
           <th>Monthly extra fee</th>
           <th>Monthly VAT</th>
+          <th>Hourly Price</th>
+          <th>Hourly extra fee</th>
+          <th>Hourly VAT</th>
         </tr>
       </thead>
       <tbody>
@@ -76,6 +79,9 @@
           <td>{{ agreement.rorligt_price or '-' }}</td>
           <td>{{ agreement.rorligt_spotpaslag or '-' }}</td>
           <td>{{ agreement.monthly_vat or '-' }}</td>
+          <td>{{ agreement.timpris_price or '-' }}</td>
+          <td>{{ agreement.timpris_spotpaslag or '-' }}</td>
+          <td>{{ agreement.hourly_vat or '-' }}</td>
         </tr>
         {% else %}
         <tr>

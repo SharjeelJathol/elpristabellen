@@ -32,6 +32,11 @@ class Agreement(Base):
     monthly_vat = Column(Float, nullable=True)         # Taxes
     rorligt_price = Column(Float, nullable=True)       # Price
 
+    # New: Hourly contract extras
+    timpris_spotpaslag = Column(Float, nullable=True)   # ExtraFee
+    hourly_vat = Column(Float, nullable=True)           # Taxes
+    timpris_price = Column(Float, nullable=True)        # Price
+
 # DB Setup
 engine = create_engine("sqlite:///data.db")
 Session = sessionmaker(bind=engine)
