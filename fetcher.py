@@ -5,7 +5,7 @@ BASE_URL = "https://www.elmarknad.se/api/agreement/filter"
 PAGINATION_URL = "https://www.elmarknad.se/api/agreement/paginationfilter"
 
 CONTRACT_TYPE_TO_COLUMN = {
-    # "Monthly": "price_monthly",
+    "Monthly": "price_monthly",
     # "Hourly": "price_hourly",
     "Fast": "price_fast"
 }
@@ -143,6 +143,26 @@ def fetch_all_agreements():
                         print(f"→ [{contract_type}] {company} | {avtalstid_column} = {price}")
                     else:
                         print(f"→ [{contract_type}] {company} | Unrecognized Avtalstid: {avtalstid}")
+                elif contract_type == "Monthly":
+                    extra_fee = ag.get("ExtraFee")
+                    taxes = ag.get("Taxes")
+
+                    try:
+                        extra_fee = float(extra_fee)
+                    except:
+                        extra_fee = None
+
+                    try:
+                        taxes = float(taxes)
+                    except:
+                        taxes = None
+
+                    db_ag.rorligt_spotpaslag = extra_fee
+                    db_ag.monthly_vat = taxes
+                    db_ag.rorligt_price = price
+
+                    print(f"→ [Monthly] {company} | Price={price}, Spotpåslag={extra_fee}, VAT={taxes}")
+
                 else:
                     print(f"→ [{contract_type}] {company} = {price}")
 

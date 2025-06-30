@@ -27,6 +27,11 @@ class Agreement(Base):
     elomrade_id = Column(Integer, nullable=False)
     postnummer = Column(Integer, nullable=False)
 
+    # New: Monthly contract extras
+    rorligt_spotpaslag = Column(Float, nullable=True)  # ExtraFee
+    monthly_vat = Column(Float, nullable=True)         # Taxes
+    rorligt_price = Column(Float, nullable=True)       # Price
+
 # DB Setup
 engine = create_engine("sqlite:///data.db")
 Session = sessionmaker(bind=engine)

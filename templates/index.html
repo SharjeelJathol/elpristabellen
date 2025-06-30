@@ -40,7 +40,7 @@
           <th>Hourly Price</th>
           <th>Fast Price</th>
           <th>Fast Monthly Fee</th>
-          <th>VAT</th>
+          <th>Fast VAT</th>
           <th>Fast 3m</th>
           <th>Fast 6m</th>
           <th>Fast 1y</th>
@@ -49,6 +49,9 @@
           <th>Fast 4y</th>
           <th>Fast 5y</th>
           <th>Fast 10y</th>
+          <th>Monthly Price</th>
+          <th>Monthly extra fee</th>
+          <th>Monthly VAT</th>
         </tr>
       </thead>
       <tbody>
@@ -70,6 +73,9 @@
           <td>{{ agreement.price_fast_4y or '-' }}</td>
           <td>{{ agreement.price_fast_5y or '-' }}</td>
           <td>{{ agreement.price_fast_10y or '-' }}</td>
+          <td>{{ agreement.rorligt_price or '-' }}</td>
+          <td>{{ agreement.rorligt_spotpaslag or '-' }}</td>
+          <td>{{ agreement.monthly_vat or '-' }}</td>
         </tr>
         {% else %}
         <tr>
