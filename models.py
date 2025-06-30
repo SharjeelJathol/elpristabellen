@@ -12,6 +12,8 @@ class Agreement(Base):
     # contract_type = Column(String, nullable=False)
     price_monthly = Column(Float, nullable=True)
     price_hourly = Column(Float, nullable=True)
+    price_fast_monthly_fee = Column(Float, nullable=True)
+    price_fast_vat = Column(Float, nullable=True)
     price_fast = Column(Float, nullable=True)
     # price = Column(Float, nullable=True)
     price_fast_3m = Column(Float, nullable=True)

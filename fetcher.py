@@ -121,6 +121,22 @@ def fetch_all_agreements():
                 # For Fast contracts, map Avtalstid
                 if contract_type == "Fast":
                     avtalstid = ag.get("Avtalstid", "")
+
+                    yearly_price = ag.get("YearlyPrice")
+                    taxes = ag.get("Taxes")
+                    # Convert to float
+                    try:
+                        yearly_price = float(yearly_price)
+                    except:
+                        yearly_price = None
+
+                    try:
+                        taxes = float(taxes)
+                    except:
+                        taxes = None
+                    db_ag.price_fast_monthly_fee = yearly_price
+                    db_ag.price_fast_vat = taxes
+
                     avtalstid_column = map_avtalstid_to_column(avtalstid)
                     if avtalstid_column:
                         setattr(db_ag, avtalstid_column, price)
