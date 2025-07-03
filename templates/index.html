@@ -30,6 +30,49 @@
   </head>
   <body>
     <h1>Elpristabellen - Electricity Prices</h1>
+    <form method="get" style="margin-bottom: 20px;">
+  <label>
+    Company:
+    <input type="text" name="company" value="{{ filters.get('company', '') }}">
+  </label>
+  &nbsp;
+  <label>
+    ElområdeId:
+    <select name="elomrade_id">
+      <option value="">All</option>
+      {% for id in [1,2,3,4] %}
+        <option value="{{ id }}" {% if filters.get('elomrade_id')|int == id %}selected{% endif %}>{{ id }}</option>
+      {% endfor %}
+    </select>
+  </label>
+  &nbsp;
+  <label>
+    Postnummer:
+    <input type="text" name="postnummer" value="{{ filters.get('postnummer', '') }}">
+  </label>
+  &nbsp;
+  <label>
+    Contract Type:
+    <select name="contract_type">
+      <option value="">All</option>
+      <option value="rorligt" {% if filters.get('contract_type') == 'rorligt' %}selected{% endif %}>Rörligt</option>
+      <option value="fast_3m" {% if filters.get('contract_type') == 'fast_3m' %}selected{% endif %}>Fast 3 months</option>
+      <option value="fast_6m" {% if filters.get('contract_type') == 'fast_6m' %}selected{% endif %}>Fast 6 months</option>
+      <option value="fast_1y" {% if filters.get('contract_type') == 'fast_1y' %}selected{% endif %}>Fast 1 year</option>
+      <option value="fast_2y" {% if filters.get('contract_type') == 'fast_2y' %}selected{% endif %}>Fast 2 years</option>
+      <option value="fast_3y" {% if filters.get('contract_type') == 'fast_3y' %}selected{% endif %}>Fast 3 years</option>
+      <option value="fast_4y" {% if filters.get('contract_type') == 'fast_4y' %}selected{% endif %}>Fast 4 years</option>
+      <option value="fast_5y" {% if filters.get('contract_type') == 'fast_5y' %}selected{% endif %}>Fast 5 years</option>
+      <option value="fast_10y" {% if filters.get('contract_type') == 'fast_10y' %}selected{% endif %}>Fast 10 years</option>
+      <option value="hourly" {% if filters.get('contract_type') == 'hourly' %}selected{% endif %}>Hourly</option>
+    </select>
+  </label>
+  &nbsp;
+  <button type="submit">Filter</button>
+  &nbsp;
+  <a href="/">Clear</a>
+</form>
+
     <table>
       <thead>
         <tr>
