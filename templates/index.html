@@ -49,50 +49,51 @@
       <thead>
         <tr>
           <th onclick="sortTable(0)">Company</th>
-          <th onclick="sortTable(1)">Region</th>
-          <th onclick="sortTable(2)">Postcode</th>
-          <th onclick="sortTable(3)">Monthly</th>
+          <th onclick="sortTable(1)">Fast 3m</th>
+          <th onclick="sortTable(2)">Fast 6m</th>
+          <th onclick="sortTable(3)">Fast 1y</th>
+          <th onclick="sortTable(4)">Fast 2y</th>
+          <th onclick="sortTable(5)">Fast 3y</th>
+          <th onclick="sortTable(6)">Fast 4y</th>
+          <th onclick="sortTable(7)">Fast 5y</th>
+          <th onclick="sortTable(8)">Fast 10y</th>
+          <th onclick="sortTable(9)">Rörligt Spotpåslag</th>
+          <th onclick="sortTable(10)">Timpris Spotpåslag</th>
+          <th onclick="sortTable(11)">Månadsavgift fast</th>
+          <th onclick="sortTable(12)">Schysst Elhandel Status</th>
+          <th onclick="sortTable(13)">Hourly Price</th>
+          <th onclick="sortTable(14)">Monthly Price</th>
+          <!-- <th onclick="sortTable(13)">Hemsida</th> -->
+          <!-- <th onclick="sortTable(3)">Monthly</th>
           <th onclick="sortTable(4)">Hourly</th>
-          <th onclick="sortTable(5)">Fast</th>
-          <th onclick="sortTable(6)">Fast 3m</th>
-          <th onclick="sortTable(7)">Fast 6m</th>
-          <th onclick="sortTable(8)">Fast 1y</th>
-          <th onclick="sortTable(9)">Fast 2y</th>
-          <th onclick="sortTable(10)">Fast 3y</th>
-          <th onclick="sortTable(11)">Fast 4y</th>
-          <th onclick="sortTable(12)">Fast 5y</th>
-          <th onclick="sortTable(13)">Fast 10y</th>
-          <th onclick="sortTable(14)">Monthly VAT</th>
-          <th onclick="sortTable(15)">Rörligt Price</th>
-          <th onclick="sortTable(16)">Rörligt Spotpåslag</th>
-          <th onclick="sortTable(17)">Fast Monthly Fee</th>
-          <th onclick="sortTable(18)">Fast VAT</th>
-          <th onclick="sortTable(19)">Trust Score</th>
+          <th onclick="sortTable(5)">Fast</th> -->
+          <!-- <th onclick="sortTable(14)">Monthly VAT</th> -->
+          <!-- <th onclick="sortTable(15)">Rörligt Price</th> -->
+          <!-- <th onclick="sortTable(18)">Fast VAT</th> -->
         </tr>
       </thead>
       <tbody>
         {% for agreement in agreements %}
         <tr data-region="{{ agreement.elomrade_id }}">
           <td>{{ agreement.company }}</td>
-          <td>{{ agreement.elomrade_id }}</td>
-          <td>{{ agreement.postnummer }}</td>
-          <td>{{ agreement.price_monthly or '–' }}</td>
-          <td>{{ agreement.price_hourly or '–' }}</td>
-          <td>{{ agreement.price_fast or '–' }}</td>
-          <td>{{ agreement.price_fast_3m or '–' }}</td>
-          <td>{{ agreement.price_fast_6m or '–' }}</td>
-          <td>{{ agreement.price_fast_1y or '–' }}</td>
-          <td>{{ agreement.price_fast_2y or '–' }}</td>
-          <td>{{ agreement.price_fast_3y or '–' }}</td>
-          <td>{{ agreement.price_fast_4y or '–' }}</td>
-          <td>{{ agreement.price_fast_5y or '–' }}</td>
-          <td>{{ agreement.price_fast_10y or '–' }}</td>
-          <td>{{ agreement.price_monthly_vat or '–' }}</td>
-          <td>{{ agreement.price_rorligt or '–' }}</td>
-          <td>{{ agreement.price_rorligt_spotpaslag or '–' }}</td>
-          <td>{{ agreement.price_fast_monthly_fee or '–' }}</td>
-          <td>{{ agreement.price_fast_vat or '–' }}</td>
+          <td>{{ agreement.price_fast_3m or '-' }}</td>
+          <td>{{ agreement.price_fast_6m or '-' }}</td>
+          <td>{{ agreement.price_fast_1y or '-' }}</td>
+          <td>{{ agreement.price_fast_2y or '-' }}</td>
+          <td>{{ agreement.price_fast_3y or '-' }}</td>
+          <td>{{ agreement.price_fast_4y or '-' }}</td>
+          <td>{{ agreement.price_fast_5y or '-' }}</td>
+          <td>{{ agreement.price_fast_10y or '-' }}</td>
+          <td>{{ agreement.rorligt_spotpaslag or '-' }}</td>
+          <td>{{ agreement.timpris_spotpaslag or '-' }}</td>
+          <td>{{ agreement.price_fast_monthly_fee or '-' }}</td>
           <td>{{ agreement.trustscore or 'Neutral' }}</td>
+          <td>{{ agreement.price_hourly or '-' }}</td>
+          <td>{{ agreement.price_monthly or '-' }}</td>
+          <!-- <td>{{ agreement.price_rorligt or '-' }}</td> -->
+          <!-- <td>{{ agreement.price_fast or '-' }}</td>
+          <td>{{ agreement.price_monthly_vat or '-' }}</td>
+          <td>{{ agreement.price_fast_vat or '-' }}</td> -->
         </tr>
         {% endfor %}
       </tbody>
@@ -108,7 +109,7 @@
 
         const isNumeric = !isNaN(
           rows
-            .find((row) => row.cells[colIndex].innerText.trim() !== '–')
+            .find((row) => row.cells[colIndex].innerText.trim() !== '-')
             ?.cells[colIndex].innerText.trim(),
         );
 
@@ -119,7 +120,7 @@
           const bText = b.cells[colIndex].innerText.trim();
 
           const aVal =
-            aText === '–'
+            aText === '-'
               ? isNumeric
                 ? Infinity
                 : ''
@@ -127,7 +128,7 @@
               ? parseFloat(aText)
               : aText.toLowerCase();
           const bVal =
-            bText === '–'
+            bText === '-'
               ? isNumeric
                 ? Infinity
                 : ''
