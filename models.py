@@ -37,6 +37,8 @@ class Agreement(Base):
     hourly_vat = Column(Float, nullable=True)           # Taxes
     timpris_price = Column(Float, nullable=True)        # Price
 
+    trustscore = Column(String)
+
 # DB Setup
 engine = create_engine("sqlite:///data.db")
 Session = sessionmaker(bind=engine)

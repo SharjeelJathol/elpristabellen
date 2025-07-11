@@ -1,5 +1,12 @@
 import requests
 from models import Session, Agreement
+from bs4 import BeautifulSoup
+from models import Session, Agreement
+
+# External list URLs
+svarta_listan_url = "https://www.energimarknadsbyran.se/el/dina-avtal-och-kostnader/valja-elavtal/klagomalslistan/"
+schysst_elhandel_url = "https://www.energimarknadsbyran.se/el/dina-avtal-och-kostnader/valja-elavtal/certifierade-elbolag/"
+
 
 BASE_URL = "https://www.elmarknad.se/api/agreement/filter"
 PAGINATION_URL = "https://www.elmarknad.se/api/agreement/paginationfilter"
@@ -12,9 +19,9 @@ CONTRACT_TYPE_TO_COLUMN = {
 
 REGIONS = [
     {"ElområdeId": 1, "Postnummer": 97231},
-    # {"ElområdeId": 2, "Postnummer": 85102},
-    # {"ElområdeId": 3, "Postnummer": 11120},
-    # {"ElområdeId": 4, "Postnummer": 21119},
+    {"ElområdeId": 2, "Postnummer": 85102},
+    {"ElområdeId": 3, "Postnummer": 11120},
+    {"ElområdeId": 4, "Postnummer": 21119},
 ]
 
 PARAMS_TEMPLATE = {
@@ -55,8 +62,28 @@ def map_avtalstid_to_column(avtalstid: str):
         return "price_fast_10y"
     return None
 
+headers = {
+    "User-Agent": "Mozilla/5.0"
+}
+
+def fetch_svarta_listan():
+    response = requests.get(svarta_listan_url, headers=headers)
+    soup = BeautifulSoup(response.text, "html.parser")
+    items = soup.select(".status-table__cell a")
+    return set(item.get_text(strip=True) for item in items if item.get_text(strip=True))
+
+def fetch_schysst_elhandel():
+    response = requests.get(schysst_elhandel_url, headers=headers)
+    soup = BeautifulSoup(response.text, "html.parser")
+    items = soup.select("li a span.rtLink")
+    return set(item.get_text(strip=True) for item in items if item.get_text(strip=True))
+
 def fetch_all_agreements():
     session = Session()
+
+    # Fetch companies' list for trustscore checks
+    svarta_listan_companies = fetch_svarta_listan()
+    schysst_elhandel_companies = fetch_schysst_elhandel()
 
     for contract_type, base_column in CONTRACT_TYPE_TO_COLUMN.items():
         for region in REGIONS:
@@ -96,6 +123,14 @@ def fetch_all_agreements():
                 company = ag.get("Company", "Unknown")
                 price = ag.get("Price")
 
+                # Check company trust score
+                if company in svarta_listan_companies:
+                    trustscore = "Svarta Listan"
+                elif company in schysst_elhandel_companies:
+                    trustscore = "Schysst Elhandel"
+                else:
+                    trustscore = "Neutral"
+
                 if price is not None:
                     try:
                         price = float(price)
@@ -117,6 +152,8 @@ def fetch_all_agreements():
 
                 # Store base contract price
                 setattr(db_ag, base_column, price)
+
+                db_ag.trustscore = trustscore
 
                 # For Fast contracts, map Avtalstid
                 if contract_type == "Fast":
