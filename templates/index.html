@@ -18,6 +18,7 @@
         border: 1px solid #ccc;
         padding: 8px 12px;
         text-align: left;
+        cursor: pointer;
       }
       th {
         background-color: #007bff;
@@ -30,75 +31,29 @@
   </head>
   <body>
     <h1>Elpristabellen - Electricity Prices</h1>
-    <form method="get" style="margin-bottom: 20px;">
-  <label>
-    Company:
-    <input type="text" name="company" value="{{ filters.get('company', '') }}">
-  </label>
-  &nbsp;
-  <label>
-    ElområdeId:
-    <select name="elomrade_id">
-      <option value="">All</option>
-      {% for id in [1,2,3,4] %}
-        <option value="{{ id }}" {% if filters.get('elomrade_id')|int == id %}selected{% endif %}>{{ id }}</option>
-      {% endfor %}
-    </select>
-  </label>
-  &nbsp;
-  <label>
-    Postnummer:
-    <input type="text" name="postnummer" value="{{ filters.get('postnummer', '') }}">
-  </label>
-  &nbsp;
-  <label>
-    Contract Type:
-    <select name="contract_type">
-      <option value="">All</option>
-      <option value="rorligt" {% if filters.get('contract_type') == 'rorligt' %}selected{% endif %}>Rörligt</option>
-      <option value="fast_3m" {% if filters.get('contract_type') == 'fast_3m' %}selected{% endif %}>Fast 3 months</option>
-      <option value="fast_6m" {% if filters.get('contract_type') == 'fast_6m' %}selected{% endif %}>Fast 6 months</option>
-      <option value="fast_1y" {% if filters.get('contract_type') == 'fast_1y' %}selected{% endif %}>Fast 1 year</option>
-      <option value="fast_2y" {% if filters.get('contract_type') == 'fast_2y' %}selected{% endif %}>Fast 2 years</option>
-      <option value="fast_3y" {% if filters.get('contract_type') == 'fast_3y' %}selected{% endif %}>Fast 3 years</option>
-      <option value="fast_4y" {% if filters.get('contract_type') == 'fast_4y' %}selected{% endif %}>Fast 4 years</option>
-      <option value="fast_5y" {% if filters.get('contract_type') == 'fast_5y' %}selected{% endif %}>Fast 5 years</option>
-      <option value="fast_10y" {% if filters.get('contract_type') == 'fast_10y' %}selected{% endif %}>Fast 10 years</option>
-      <option value="hourly" {% if filters.get('contract_type') == 'hourly' %}selected{% endif %}>Hourly</option>
-    </select>
-  </label>
-  &nbsp;
-  <button type="submit">Filter</button>
-  &nbsp;
-  <a href="/">Clear</a>
-</form>
-
-    <table>
+    <table id="priceTable">
       <thead>
         <tr>
-          <th>Company</th>
-          <th>Region (ElområdeId)</th>
-          <th>Postnummer</th>
-          <th>Schysst elhandel</th>
-          <!-- <th>Monthly Price</th>
-          <th>Hourly Price</th>
-          <th>Fast Price</th> -->
-          <th>Fast Monthly Fee</th>
-          <th>Fast VAT</th>
-          <th>Fast 3m</th>
-          <th>Fast 6m</th>
-          <th>Fast 1y</th>
-          <th>Fast 2y</th>
-          <th>Fast 3y</th>
-          <th>Fast 4y</th>
-          <th>Fast 5y</th>
-          <th>Fast 10y</th>
-          <th>Monthly Price</th>
-          <th>Monthly extra fee</th>
-          <th>Monthly VAT</th>
-          <th>Hourly Price</th>
-          <th>Hourly extra fee</th>
-          <th>Hourly VAT</th>
+          <th onclick="sortTable(0)">Company</th>
+          <th onclick="sortTable(1)">Region</th>
+          <th onclick="sortTable(2)">Postcode</th>
+          <th onclick="sortTable(3)">Monthly</th>
+          <th onclick="sortTable(4)">Hourly</th>
+          <th onclick="sortTable(5)">Fast</th>
+          <th onclick="sortTable(6)">Fast 3m</th>
+          <th onclick="sortTable(7)">Fast 6m</th>
+          <th onclick="sortTable(8)">Fast 1y</th>
+          <th onclick="sortTable(9)">Fast 2y</th>
+          <th onclick="sortTable(10)">Fast 3y</th>
+          <th onclick="sortTable(11)">Fast 4y</th>
+          <th onclick="sortTable(12)">Fast 5y</th>
+          <th onclick="sortTable(13)">Fast 10y</th>
+          <th onclick="sortTable(14)">Monthly VAT</th>
+          <th onclick="sortTable(15)">Rörligt Price</th>
+          <th onclick="sortTable(16)">Rörligt Spotpåslag</th>
+          <th onclick="sortTable(17)">Fast Monthly Fee</th>
+          <th onclick="sortTable(18)">Fast VAT</th>
+          <th onclick="sortTable(19)">Trust Score</th>
         </tr>
       </thead>
       <tbody>
@@ -107,33 +62,73 @@
           <td>{{ agreement.company }}</td>
           <td>{{ agreement.elomrade_id }}</td>
           <td>{{ agreement.postnummer }}</td>
-          <td>{{ agreement.trustscore }}</td>
-          <!-- <td>{{ agreement.price_monthly if agreement.price_monthly is not none else '-' }}</td>
-          <td>{{ agreement.price_hourly if agreement.price_hourly is not none else '-' }}</td>
-          <td>{{ agreement.price_fast if agreement.price_fast is not none else '-' }}</td> -->
-          <td>{{ agreement.price_fast_monthly_fee or '-' }}</td>
-          <td>{{ agreement.price_fast_vat or '-' }}</td>
-          <td>{{ agreement.price_fast_3m or '-' }}</td>
-          <td>{{ agreement.price_fast_6m or '-' }}</td>
-          <td>{{ agreement.price_fast_1y or '-' }}</td>
-          <td>{{ agreement.price_fast_2y or '-' }}</td>
-          <td>{{ agreement.price_fast_3y or '-' }}</td>
-          <td>{{ agreement.price_fast_4y or '-' }}</td>
-          <td>{{ agreement.price_fast_5y or '-' }}</td>
-          <td>{{ agreement.price_fast_10y or '-' }}</td>
-          <td>{{ agreement.rorligt_price or '-' }}</td>
-          <td>{{ agreement.rorligt_spotpaslag or '-' }}</td>
-          <td>{{ agreement.monthly_vat or '-' }}</td>
-          <td>{{ agreement.timpris_price or '-' }}</td>
-          <td>{{ agreement.timpris_spotpaslag or '-' }}</td>
-          <td>{{ agreement.hourly_vat or '-' }}</td>
-        </tr>
-        {% else %}
-        <tr>
-          <td colspan="6">No agreements found.</td>
+          <td>{{ agreement.price_monthly or '–' }}</td>
+          <td>{{ agreement.price_hourly or '–' }}</td>
+          <td>{{ agreement.price_fast or '–' }}</td>
+          <td>{{ agreement.price_fast_3m or '–' }}</td>
+          <td>{{ agreement.price_fast_6m or '–' }}</td>
+          <td>{{ agreement.price_fast_1y or '–' }}</td>
+          <td>{{ agreement.price_fast_2y or '–' }}</td>
+          <td>{{ agreement.price_fast_3y or '–' }}</td>
+          <td>{{ agreement.price_fast_4y or '–' }}</td>
+          <td>{{ agreement.price_fast_5y or '–' }}</td>
+          <td>{{ agreement.price_fast_10y or '–' }}</td>
+          <td>{{ agreement.price_monthly_vat or '–' }}</td>
+          <td>{{ agreement.price_rorligt or '–' }}</td>
+          <td>{{ agreement.price_rorligt_spotpaslag or '–' }}</td>
+          <td>{{ agreement.price_fast_monthly_fee or '–' }}</td>
+          <td>{{ agreement.price_fast_vat or '–' }}</td>
+          <td>{{ agreement.trustscore or 'Neutral' }}</td>
         </tr>
         {% endfor %}
       </tbody>
     </table>
+
+    <script>
+      let sortDirections = {};
+
+      function sortTable(colIndex) {
+        const table = document.getElementById('priceTable');
+        const tbody = table.tBodies[0];
+        const rows = Array.from(tbody.rows);
+
+        const isNumeric = !isNaN(
+          rows
+            .find((row) => row.cells[colIndex].innerText.trim() !== '–')
+            ?.cells[colIndex].innerText.trim(),
+        );
+
+        // Toggle sort direction
+        sortDirections[colIndex] = !sortDirections[colIndex];
+
+        rows.sort((a, b) => {
+          const aText = a.cells[colIndex].innerText.trim();
+          const bText = b.cells[colIndex].innerText.trim();
+
+          const aVal =
+            aText === '–'
+              ? isNumeric
+                ? Infinity
+                : ''
+              : isNumeric
+              ? parseFloat(aText)
+              : aText.toLowerCase();
+          const bVal =
+            bText === '–'
+              ? isNumeric
+                ? Infinity
+                : ''
+              : isNumeric
+              ? parseFloat(bText)
+              : bText.toLowerCase();
+
+          if (aVal < bVal) return sortDirections[colIndex] ? -1 : 1;
+          if (aVal > bVal) return sortDirections[colIndex] ? 1 : -1;
+          return 0;
+        });
+
+        rows.forEach((row) => tbody.appendChild(row));
+      }
+    </script>
   </body>
 </html>
