@@ -27,10 +27,24 @@
       tr:nth-child(even) {
         background-color: #f5f5f5;
       }
+      #regionSelect {
+        font-size: 16px;
+        padding: 6px;
+        margin-bottom: 10px;
+      }
     </style>
   </head>
   <body>
     <h1>Elpristabellen - Electricity Prices</h1>
+
+    <label for="regionSelect"><strong>Select Region (ElområdeId):</strong></label>
+    <select id="regionSelect">
+      <option value="1" {% if selected_region == 1 %}selected{% endif %}>Region 1</option>
+      <option value="2" {% if selected_region == 2 %}selected{% endif %}>Region 2</option>
+      <option value="3" {% if selected_region == 3 %}selected{% endif %}>Region 3</option>
+      <option value="4" {% if selected_region == 4 %}selected{% endif %}>Region 4</option>
+    </select>
+
     <table id="priceTable">
       <thead>
         <tr>
@@ -58,7 +72,7 @@
       </thead>
       <tbody>
         {% for agreement in agreements %}
-        <tr>
+        <tr data-region="{{ agreement.elomrade_id }}">
           <td>{{ agreement.company }}</td>
           <td>{{ agreement.elomrade_id }}</td>
           <td>{{ agreement.postnummer }}</td>
@@ -98,7 +112,6 @@
             ?.cells[colIndex].innerText.trim(),
         );
 
-        // Toggle sort direction
         sortDirections[colIndex] = !sortDirections[colIndex];
 
         rows.sort((a, b) => {
@@ -129,6 +142,12 @@
 
         rows.forEach((row) => tbody.appendChild(row));
       }
+
+      document.getElementById('regionSelect').addEventListener('change', function () {
+        const regionId = this.value;
+        window.location.href = `/region/${regionId}`;
+      });
+      
     </script>
   </body>
 </html>
