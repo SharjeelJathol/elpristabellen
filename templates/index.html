@@ -79,20 +79,20 @@
       <thead>
         <tr>
           <th onclick="sortTable(0)">Company</th>
-          <th onclick="sortTable(1)">Fast 3m</th>
-          <th onclick="sortTable(2)">Fast 6m</th>
-          <th onclick="sortTable(3)">Fast 1y</th>
-          <th onclick="sortTable(4)">Fast 2y</th>
-          <th onclick="sortTable(5)">Fast 3y</th>
-          <th onclick="sortTable(6)">Fast 4y</th>
-          <th onclick="sortTable(7)">Fast 5y</th>
-          <th onclick="sortTable(8)">Fast 10y</th>
-          <th onclick="sortTable(9)">Rörligt Spotpåslag</th>
-          <th onclick="sortTable(10)">Timpris Spotpåslag</th>
-          <th onclick="sortTable(11)">Månadsavgift fast</th>
-          <th onclick="sortTable(12)">Schysst Elhandel Status</th>
-          <th onclick="sortTable(13)">Hourly Price</th>
-          <th onclick="sortTable(14)">Monthly Price</th>
+          <!-- <th onclick="sortTable(1)">Fast 3m</th> -->
+          <th onclick="sortTable(1)">Fast 6m</th>
+          <th onclick="sortTable(2)">Fast 1y</th>
+          <th onclick="sortTable(3)">Fast 2y</th>
+          <th onclick="sortTable(4)">Fast 3y</th>
+          <th onclick="sortTable(5)">Fast 4y</th>
+          <!-- <th onclick="sortTable(7)">Fast 5y</th>
+          <th onclick="sortTable(8)">Fast 10y</th> -->
+          <th onclick="sortTable(6)">Rörligt Spotpåslag</th>
+          <th onclick="sortTable(7)">Timpris Spotpåslag</th>
+          <th onclick="sortTable(8)">Månadsavgift fast</th>
+          <th onclick="sortTable(9)">Schysst Elhandel Status</th>
+          <th onclick="sortTable(10)">Hourly Price</th>
+          <th onclick="sortTable(11)">Monthly Price</th>
           <!-- <th onclick="sortTable(13)">Hemsida</th> -->
           <!-- <th onclick="sortTable(3)">Monthly</th>
           <th onclick="sortTable(4)">Hourly</th>
@@ -106,14 +106,14 @@
         {% for agreement in agreements %}
         <tr data-region="{{ agreement.elomrade_id }}">
           <td>{{ agreement.company }}</td>
-          <td>{{ agreement.price_fast_3m or '-' }}</td>
+          <!-- <td>{{ agreement.price_fast_3m or '-' }}</td> -->
           <td>{{ agreement.price_fast_6m or '-' }}</td>
           <td>{{ agreement.price_fast_1y or '-' }}</td>
           <td>{{ agreement.price_fast_2y or '-' }}</td>
           <td>{{ agreement.price_fast_3y or '-' }}</td>
           <td>{{ agreement.price_fast_4y or '-' }}</td>
-          <td>{{ agreement.price_fast_5y or '-' }}</td>
-          <td>{{ agreement.price_fast_10y or '-' }}</td>
+          <!-- <td>{{ agreement.price_fast_5y or '-' }}</td>
+          <td>{{ agreement.price_fast_10y or '-' }}</td> -->
           <td>{{ agreement.rorligt_spotpaslag or '-' }}</td>
           <td>{{ agreement.timpris_spotpaslag or '-' }}</td>
           <td>{{ agreement.price_fast_monthly_fee or '-' }}</td>
