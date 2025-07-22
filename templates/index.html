@@ -32,18 +32,48 @@
         padding: 6px;
         margin-bottom: 10px;
       }
+      .region-buttons {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        margin-bottom: 15px;
+      }
+
+      .region-button {
+        padding: 8px 14px;
+        background-color: #007bff;
+        color: white;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        font-size: 14px;
+        transition: background-color 0.3s;
+      }
+
+      .region-button:hover {
+        background-color: #0056b3;
+      }
+
+      @media (max-width: 600px) {
+        .region-button {
+          flex: 1 1 100%;
+          font-size: 13px;
+        }
+      }
+
     </style>
   </head>
   <body>
     <h1>Elpristabellen - Electricity Prices</h1>
 
-    <label for="regionSelect"><strong>Select Region (ElområdeId):</strong></label>
-    <select id="regionSelect">
-      <option value="1" {% if selected_region == 1 %}selected{% endif %}>Region 1</option>
-      <option value="2" {% if selected_region == 2 %}selected{% endif %}>Region 2</option>
-      <option value="3" {% if selected_region == 3 %}selected{% endif %}>Region 3</option>
-      <option value="4" {% if selected_region == 4 %}selected{% endif %}>Region 4</option>
-    </select>
+    <div class="region-buttons">
+      <strong>Select Region (ElområdeId):</strong><br><br>
+      <button class="region-button" data-region="1" {% if selected_region == 1 %}style="background-color:#0056b3"{% endif %}>SE1</button>
+      <button class="region-button" data-region="2" {% if selected_region == 2 %}style="background-color:#0056b3"{% endif %}>SE2</button>
+      <button class="region-button" data-region="3" {% if selected_region == 3 %}style="background-color:#0056b3"{% endif %}>SE3</button>
+      <button class="region-button" data-region="4" {% if selected_region == 4 %}style="background-color:#0056b3"{% endif %}>SE4</button>
+    </div>
+
 
     <table id="priceTable">
       <thead>
@@ -102,40 +132,48 @@
     <script>
         let sortDirections = {};
 
-  function sortTable(n) {
-    const table = document.getElementById("priceTable");
-    const rows = Array.from(table.rows).slice(1); // skip header row
-    const isAscending = sortDirections[n] !== "asc";
-    sortDirections[n] = isAscending ? "asc" : "desc";
+      function sortTable(n) {
+        const table = document.getElementById("priceTable");
+        const rows = Array.from(table.rows).slice(1); // skip header row
+        const isAscending = sortDirections[n] !== "asc";
+        sortDirections[n] = isAscending ? "asc" : "desc";
 
-    rows.sort((rowA, rowB) => {
-      const a = rowA.cells[n].textContent.trim();
-      const b = rowB.cells[n].textContent.trim();
+        rows.sort((rowA, rowB) => {
+          const a = rowA.cells[n].textContent.trim();
+          const b = rowB.cells[n].textContent.trim();
 
-      const aEmpty = a === "-" || a === "";
-      const bEmpty = b === "-" || b === "";
+          const aEmpty = a === "-" || a === "";
+          const bEmpty = b === "-" || b === "";
 
-      // Empty values always sort last
-      if (aEmpty && bEmpty) return 0;
-      if (aEmpty) return 1;
-      if (bEmpty) return -1;
+          // Empty values always sort last
+          if (aEmpty && bEmpty) return 0;
+          if (aEmpty) return 1;
+          if (bEmpty) return -1;
 
-      const aVal = isNaN(a) ? a.toLowerCase() : parseFloat(a);
-      const bVal = isNaN(b) ? b.toLowerCase() : parseFloat(b);
+          const aVal = isNaN(a) ? a.toLowerCase() : parseFloat(a);
+          const bVal = isNaN(b) ? b.toLowerCase() : parseFloat(b);
 
-      if (aVal < bVal) return isAscending ? -1 : 1;
-      if (aVal > bVal) return isAscending ? 1 : -1;
-      return 0;
-    });
+          if (aVal < bVal) return isAscending ? -1 : 1;
+          if (aVal > bVal) return isAscending ? 1 : -1;
+          return 0;
+        });
 
-    // Reattach sorted rows
-    for (const row of rows) {
-      table.tBodies[0].appendChild(row);
-    }
-  }
-      document.getElementById('regionSelect').addEventListener('change', function () {
-        const regionId = this.value;
-        window.location.href = `/region/${regionId}`;
+        // Reattach sorted rows
+        for (const row of rows) {
+          table.tBodies[0].appendChild(row);
+        }
+      }
+
+      // document.getElementById('regionSelect').addEventListener('change', function () {
+      //   const regionId = this.value;
+      //   window.location.href = `/region/${regionId}`;
+      // });
+      
+      document.querySelectorAll('.region-button').forEach(button => {
+        button.addEventListener('click', () => {
+          const regionId = button.dataset.region;
+          window.location.href = `/region/${regionId}`;
+        });
       });
       
     </script>
