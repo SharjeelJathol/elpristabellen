@@ -100,50 +100,39 @@
     </table>
 
     <script>
-      let sortDirections = {};
+        let sortDirections = {};
 
-      function sortTable(colIndex) {
-        const table = document.getElementById('priceTable');
-        const tbody = table.tBodies[0];
-        const rows = Array.from(tbody.rows);
+  function sortTable(n) {
+    const table = document.getElementById("priceTable");
+    const rows = Array.from(table.rows).slice(1); // skip header row
+    const isAscending = sortDirections[n] !== "asc";
+    sortDirections[n] = isAscending ? "asc" : "desc";
 
-        const isNumeric = !isNaN(
-          rows
-            .find((row) => row.cells[colIndex].innerText.trim() !== '-')
-            ?.cells[colIndex].innerText.trim(),
-        );
+    rows.sort((rowA, rowB) => {
+      const a = rowA.cells[n].textContent.trim();
+      const b = rowB.cells[n].textContent.trim();
 
-        sortDirections[colIndex] = !sortDirections[colIndex];
+      const aEmpty = a === "-" || a === "";
+      const bEmpty = b === "-" || b === "";
 
-        rows.sort((a, b) => {
-          const aText = a.cells[colIndex].innerText.trim();
-          const bText = b.cells[colIndex].innerText.trim();
+      // Empty values always sort last
+      if (aEmpty && bEmpty) return 0;
+      if (aEmpty) return 1;
+      if (bEmpty) return -1;
 
-          const aVal =
-            aText === '-'
-              ? isNumeric
-                ? Infinity
-                : ''
-              : isNumeric
-              ? parseFloat(aText)
-              : aText.toLowerCase();
-          const bVal =
-            bText === '-'
-              ? isNumeric
-                ? Infinity
-                : ''
-              : isNumeric
-              ? parseFloat(bText)
-              : bText.toLowerCase();
+      const aVal = isNaN(a) ? a.toLowerCase() : parseFloat(a);
+      const bVal = isNaN(b) ? b.toLowerCase() : parseFloat(b);
 
-          if (aVal < bVal) return sortDirections[colIndex] ? -1 : 1;
-          if (aVal > bVal) return sortDirections[colIndex] ? 1 : -1;
-          return 0;
-        });
+      if (aVal < bVal) return isAscending ? -1 : 1;
+      if (aVal > bVal) return isAscending ? 1 : -1;
+      return 0;
+    });
 
-        rows.forEach((row) => tbody.appendChild(row));
-      }
-
+    // Reattach sorted rows
+    for (const row of rows) {
+      table.tBodies[0].appendChild(row);
+    }
+  }
       document.getElementById('regionSelect').addEventListener('change', function () {
         const regionId = this.value;
         window.location.href = `/region/${regionId}`;
