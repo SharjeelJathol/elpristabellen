@@ -171,7 +171,7 @@ def fetch_all_agreements():
                         taxes = float(taxes)
                     except:
                         taxes = None
-                    db_ag.price_fast_monthly_fee = yearly_price
+                    db_ag.price_fast_monthly_fee = (yearly_price * 1.25) 
                     db_ag.price_fast_vat = taxes
 
                     avtalstid_column = map_avtalstid_to_column(avtalstid)
@@ -182,6 +182,14 @@ def fetch_all_agreements():
                         print(f"→ [{contract_type}] {company} | Unrecognized Avtalstid: {avtalstid}")
                 elif contract_type == "Monthly":
                     extra_fee = ag.get("ExtraFee")
+                    raw_fee = ag.get("RawFee")
+                    volume_fee = ag.get("VolumeFee")
+                    misc_fee = ag.get("MiscFee")
+                    start_fee = ag.get("StartFee")
+                    certificate_fee = ag.get("CertificateFee")
+                    environment_extra = ag.get("EnvironmentExtra")
+                    dynamic_environment_extra = ag.get("DynamicEnvironmentExtra")
+                    
                     taxes = ag.get("Taxes")
 
                     try:
@@ -194,13 +202,20 @@ def fetch_all_agreements():
                     except:
                         taxes = None
 
-                    db_ag.rorligt_spotpaslag = extra_fee
+                    db_ag.rorligt_spotpaslag = (extra_fee + raw_fee + volume_fee + misc_fee + start_fee + certificate_fee + environment_extra + dynamic_environment_extra) * 1.25
                     db_ag.monthly_vat = taxes
                     db_ag.rorligt_price = price
 
                     print(f"→ [Monthly] {company} | Price={price}, Spotpåslag={extra_fee}, VAT={taxes}")
                 elif contract_type == "Hourly":
                     extra_fee = ag.get("ExtraFee")
+                    raw_fee = ag.get("RawFee")
+                    volume_fee = ag.get("VolumeFee")
+                    misc_fee = ag.get("MiscFee")
+                    start_fee = ag.get("StartFee")
+                    certificate_fee = ag.get("CertificateFee")
+                    environment_extra = ag.get("EnvironmentExtra")
+                    dynamic_environment_extra = ag.get("DynamicEnvironmentExtra")
                     taxes = ag.get("Taxes")
 
                     try:
@@ -213,7 +228,7 @@ def fetch_all_agreements():
                     except:
                         taxes = None
 
-                    db_ag.timpris_spotpaslag = extra_fee
+                    db_ag.timpris_spotpaslag = (extra_fee + raw_fee + volume_fee + misc_fee + start_fee + certificate_fee + environment_extra + dynamic_environment_extra) * 1.25
                     db_ag.hourly_vat = taxes
                     db_ag.timpris_price = price
 
