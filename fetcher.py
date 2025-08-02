@@ -202,7 +202,7 @@ def fetch_all_agreements():
                     except:
                         taxes = None
 
-                    db_ag.rorligt_spotpaslag = (extra_fee + raw_fee + volume_fee + misc_fee + start_fee + certificate_fee + environment_extra + dynamic_environment_extra) * 1.25
+                    db_ag.rorligt_spotpaslag = (float(extra_fee) + float(raw_fee) + float(volume_fee) + float(misc_fee) + float(start_fee) + float(certificate_fee) + float(environment_extra) + float(dynamic_environment_extra)) * 1.25
                     db_ag.monthly_vat = taxes
                     db_ag.rorligt_price = price
 
@@ -228,7 +228,7 @@ def fetch_all_agreements():
                     except:
                         taxes = None
 
-                    db_ag.timpris_spotpaslag = (extra_fee + raw_fee + volume_fee + misc_fee + start_fee + certificate_fee + environment_extra + dynamic_environment_extra) * 1.25
+                    db_ag.timpris_spotpaslag = (float(extra_fee) + float(raw_fee) + float(volume_fee) + float(misc_fee) + float(start_fee) + float(certificate_fee) + float(environment_extra) + float(dynamic_environment_extra)) * 1.25
                     db_ag.hourly_vat = taxes
                     db_ag.timpris_price = price
 
